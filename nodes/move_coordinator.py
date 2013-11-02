@@ -13,6 +13,7 @@ from move_base_msgs.msg import *
 from actionlib_msgs.msg import GoalID
 from youbot_coll_test.srv import Goal, GoalResponse
 from std_srvs.srv import Empty, EmptyResponse
+from youbot_coll_test.msg import Status
 
 
 class MoveBaseCoordAction(object):
@@ -37,6 +38,7 @@ class MoveBaseCoordAction(object):
   _goal = None
 
   _client = None
+  _status_pub = None
   _prolog = None
   _rob_self = None
 
@@ -61,11 +63,12 @@ class MoveBaseCoordAction(object):
 
     # publish successfull results
     self._result = rospy.Publisher('move_coordinator/result', MoveBaseActionResult)
+    self._status_pub = rospy.Publisher('/' + self._rob_self + '/status', Status)
 
     # interface to prolog
-    self._prolog = json_prolog.Prolog('json_prolog')
     self.loginfo("Waiting for json_prolog server")
-    rospy.wait_for_service('json_prolog/query')
+    rospy.wait_for_service('json_prolog/simple_query')
+    self._prolog = json_prolog.Prolog('json_prolog')
 
     self.loginfo("move_coordinator up and running")
 
@@ -96,6 +99,7 @@ class MoveBaseCoordAction(object):
 
     # set up local goal
     self._goal = goal
+    self._status_pub.publish("Moving")
     self.check_and_run(None)
 
     return GoalResponse("OK")
@@ -160,6 +164,7 @@ class MoveBaseCoordAction(object):
       
       self._goal = None
       self._executing = False
+      self._status_pub.publish("Still")
 
       self.loginfo("Done. Ready for another task")
 

@@ -1,11 +1,12 @@
 <launch>
-    <arg name="ns" default="/youbot" />
+    <arg name="ns" default="/youbot0" />
+    <arg name="rid" default="youbot0" />
 
     <group ns="$(arg ns)">
         <node name="json_prolog" pkg="json_prolog" type="json_prolog">
             <param name="initial_package" value="youbot_coll_test" />
         </node>
 
-        <node name="youbot_logger" pkg="youbot_coll_test" type="robot_logger.py" output="screen" args="--ns $(arg ns)"/>
+        <node name="youbot_logger" pkg="youbot_coll_test" type="robot_logger.py" output="screen" args="--rid $(arg rid)"/>
     </group>
 </launch>
