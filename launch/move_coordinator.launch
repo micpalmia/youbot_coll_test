@@ -1,0 +1,12 @@
+<launch>
+    <arg name="ns" default="/youbot0" />
+    <arg name="rid" default="youbot0" />
+
+    <!--include file="$(find youbot_2dnav)/launch/move_base.launch">
+        <arg name="ns" value="$(arg ns)"/>
+    </include-->
+
+    <group ns="$(arg ns)">
+        <node name="move_coord" pkg="youbot_coll_test" type="move_coordinator.py" output="screen" args="--rid $(arg rid)"/>
+    </group>
+</launch>

@@ -1,0 +1,195 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE rdf:RDF [
+<!ENTITY owl        "http://www.w3.org/2002/07/owl#" >
+<!ENTITY xsd        "http://www.w3.org/2001/XMLSchema#" >
+<!ENTITY rdfs       "http://www.w3.org/2000/01/rdf-schema#" >
+<!ENTITY rdf        "http://www.w3.org/1999/02/22-rdf-syntax-ns#" >
+<!ENTITY move       "http://www.dei.unipd.it/kr/simple-move.owl#" >
+<!ENTITY knowrob    "http://ias.cs.tum.edu/kb/knowrob.owl#" >
+<!ENTITY computable "http://ias.cs.tum.edu/kb/computable.owl#" >
+]>
+
+
+<rdf:RDF 
+ xmlns            ="&move;"
+ xmlns:move       ="&move;"
+ xml:base         ="&move;"
+ xmlns:knowrob    ="&knowrob;"
+ xmlns:owl        ="&owl;"  
+ xmlns:rdf        ="&rdf;"   
+ xmlns:rdfs       ="&rdfs;"
+ xmlns:xsd        ="&xsd;" 
+ >
+
+<owl:Ontology rdf:about="&move;">
+    <owl:imports rdf:resource="file:///home/mic/workspace/hydro/rosbuild_ws/stacks/knowrob/ias_knowledge_base/owl/knowrob.owl" />
+    <rdfs:comment rdf:datatype="&xsd;string">
+        Trial action recipe for simple robot translation.
+    </rdfs:comment>
+</owl:Ontology>
+
+<!-- -->
+
+<owl:Class rdf:about="&move;ActionPrimitive" />
+
+<owl:Class rdf:about="&knowrob;SubAction" />
+
+<owl:Class rdf:about="&move;MovingStatus" />
+
+<owl:Class rdf:about="&move;Still">
+    <rdfs:subClassOf rdf:resource="&move;MovingStatus"/>
+</owl:Class>
+
+<owl:Class rdf:about="&move;Moving">
+    <rdfs:subClassOf rdf:resource="&move;MovingStatus"/>
+</owl:Class>
+
+<owl:Class rdf:about="&move;YouBot">
+    <rdfs:subClassOf rdf:resource="&knowrob;Robot"/>
+    <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="&move;isInMovingStatus"/>
+                <owl:hasValue rdf:resource="&move;Still"/>
+            </owl:Restriction>
+    </rdfs:subClassOf>
+</owl:Class>
+
+<owl:Class rdf:about="&move;ProgrammedPerception">
+    <rdfs:subClassOf rdf:resource="&knowrob;Perceiving"/>
+</owl:Class>
+
+<!-- -->
+
+<owl:DatatypeProperty rdf:about="&move;hasRobotId">
+    <rdfs:domain rdf:resource="&knowrob;Robot"/>
+    <rdfs:range rdf:resource="&xsd;string"/>
+</owl:DatatypeProperty>
+
+<owl:ObjectProperty rdf:about="&move;providedByMotionPrimitive">
+    <rdfs:domain rdf:resource="&knowrob;SubAction"/>
+    <rdfs:range rdf:resource="&move;ActionPrimitive"/>
+</owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="&move;isInMovingStatus">
+    <rdfs:domain rdf:resource="&knowrob;Robot"/>
+    <rdfs:range rdf:resource="&move;MovingStatus"/>
+</owl:ObjectProperty>
+
+<owl:DatatypeProperty rdf:about="&move;providedByROSAction">
+    <rdfs:domain rdf:resource="&knowrob;ActionPrimitive"/>
+    <rdfs:range rdf:resource="&xsd;string"/>
+</owl:DatatypeProperty>
+
+<owl:DatatypeProperty rdf:about="&move;destXValue">
+    <rdfs:domain rdf:resource="&knowrob;Translation-LocationChange"/>
+    <rdfs:range rdf:resource="&xsd;decimal"/>
+</owl:DatatypeProperty>
+
+<owl:DatatypeProperty rdf:about="&move;destYValue">
+    <rdfs:domain rdf:resource="&knowrob;Translation-LocationChange"/>
+    <rdfs:range rdf:resource="&xsd;decimal"/>
+</owl:DatatypeProperty>
+
+<!-- -->
+<owl:Class rdf:about="&move;move_base">
+    <rdfs:subClassOf rdf:resource="&move;ActionPrimitive" />
+    <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="&move;providedByROSAction"/>
+                <owl:hasValue rdf:datatype="&xsd;string">"move_base"</owl:hasValue>
+            </owl:Restriction>
+    </rdfs:subClassOf>
+</owl:Class>
+<!-- -->
+
+    <owl:Class rdf:about="&move;GoToPoint">
+        <rdfs:subClassOf rdf:resource="&knowrob;Translation-LocationChange"/>
+        <rdfs:subClassOf>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <owl:Restriction> 
+                        <owl:onProperty rdf:resource="&move;providedByMotionPrimitive"/>
+                        <owl:hasValue rdf:resource="&move;move_base" />
+                    </owl:Restriction>
+                    <owl:Restriction> 
+                        <owl:onProperty rdf:resource="&move;destXValue"/>
+                        <owl:cardinality rdf:datatype="&xsd;decimal">1</owl:cardinality>
+                    </owl:Restriction>
+                    <owl:Restriction> 
+                        <owl:onProperty rdf:resource="&move;destYValue"/>
+                        <owl:cardinality rdf:datatype="&xsd;decimal">1</owl:cardinality>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </rdfs:subClassOf>
+    </owl:Class>
+
+    <owl:Class rdf:about="&move;MovementTest">
+        <rdfs:subClassOf rdf:resource="&knowrob;Translation-LocationChange"/>
+            <rdfs:subClassOf>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="&knowrob;subAction"/>
+                        <owl:someValuesFrom rdf:resource="&move;GoToBeginning"/>
+                    </owl:Restriction>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="&knowrob;subAction"/>
+                        <owl:someValuesFrom rdf:resource="&move;Movement1"/>
+                    </owl:Restriction>
+                    
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="&knowrob;orderingConstraints"/>
+                        <owl:hasValue rdf:resource="#Moving12"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </rdfs:subClassOf>
+    </owl:Class>
+
+    <knowrob:PartialOrdering-Strict rdf:about="&move;#Moving12">
+        <knowrob:occursBeforeInOrdering rdf:resource="&move;#GoToBeginning"/>
+        <knowrob:occursAfterInOrdering rdf:resource="&move;#Movement1"/>
+    </knowrob:PartialOrdering-Strict>
+
+
+
+    <owl:Class rdf:about="&move;GoToBeginning">
+    <rdfs:subClassOf rdf:resource="&move;GoToPoint" />
+        <rdfs:subClassOf>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <owl:Restriction> 
+                        <owl:onProperty rdf:resource="&move;destXValue"/>
+                        <owl:hasValue rdf:datatype="&xsd;decimal">-2.00</owl:hasValue>
+                    </owl:Restriction>
+                    <owl:Restriction> 
+                        <owl:onProperty rdf:resource="&move;destYValue"/>
+                        <owl:hasValue rdf:datatype="&xsd;decimal">-2.00</owl:hasValue>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </rdfs:subClassOf>
+</owl:Class> 
+
+<owl:Class rdf:about="&move;Movement1">
+    <rdfs:subClassOf rdf:resource="&move;GoToPoint" />
+        <rdfs:subClassOf>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <owl:Restriction> 
+                        <owl:onProperty rdf:resource="&move;destXValue"/>
+                        <owl:hasValue rdf:datatype="&xsd;decimal">3.00</owl:hasValue>
+                    </owl:Restriction>
+                    <owl:Restriction> 
+                        <owl:onProperty rdf:resource="&move;destYValue"/>
+                        <owl:hasValue rdf:datatype="&xsd;decimal">3.00</owl:hasValue>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </rdfs:subClassOf>
+</owl:Class> 
+
+
+</rdf:RDF>

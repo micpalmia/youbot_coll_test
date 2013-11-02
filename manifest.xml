@@ -1,0 +1,19 @@
+<package>
+  <description brief="youbot_coll_test">
+
+     youbot_coll_test
+
+  </description>
+  <author>Michele Palmia</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/youbot_coll_test</url>
+
+  <depend package="rospy"/>
+  <depend package="json_prolog"/>
+  <depend package="move_base_msgs"/>
+  <depend package="actionlib"/>
+
+</package>
+
+

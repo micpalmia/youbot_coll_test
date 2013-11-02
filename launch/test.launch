@@ -1,0 +1,9 @@
+<launch>
+
+  <arg name="ns" default="/youbot" />
+
+  <group ns="$(arg ns)">
+    <node name="youbot_test" pkg="youbot_coll_test" type="test.py" output="screen" />
+  </group>
+
+</launch>
